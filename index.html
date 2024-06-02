@@ -93,7 +93,6 @@
             const redirectURL = validateLogin(idCardNumber, password);
             if (redirectURL) {
                 errorMessage.textContent = '';
-                localStorage.setItem('loggedIn', 'true');
                 window.location.href = redirectURL;
             } else {
                 errorMessage.textContent = 'Invalid ID card number or password';
@@ -114,4 +113,4 @@
         }
     </script>
 </body>
-</html>
+    </html>
