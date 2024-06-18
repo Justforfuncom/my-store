@@ -44,6 +44,11 @@
             margin-top: 20px;
             font-style: italic;
         }
+        .confirmation {
+            text-align: center;
+            color: green;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -74,6 +79,7 @@
         <div class="transaction-code">
             <p id="transaction-code-display"></p>
         </div>
+        <div class="confirmation" id="confirmation-message"></div>
     </div>
 
     <script>
@@ -125,7 +131,26 @@
             localStorage.setItem('totalAmount', totalAmount);
 
             document.getElementById('transaction-code-display').textContent = `Transaction Code: ${transactionCode}`;
+            document.getElementById('confirmation-message').textContent = ''; // Clear any previous messages
         }
+
+        // Check for successful payment
+        function checkPaymentStatus() {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const paymentStatus = urlParams.get('paymentStatus');
+
+            if (paymentStatus === 'success') {
+                document.getElementById('confirmation-message').textContent = 'Payment Successful!';
+                localStorage.removeItem('transactionCode');
+                localStorage.removeItem('totalAmount');
+                cart = [];
+                updateCart();
+            }
+        }
+
+        // Run this function when the page loads to check for payment status
+        window.onload = checkPaymentStatus;
     </script>
 </body>
 </html>
