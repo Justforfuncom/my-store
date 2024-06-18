@@ -3,114 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Screen</title>
+    <title>Kid's Shop</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
+            margin: 50px;
         }
-
-        .login-container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
+        .shop {
+            max-width: 600px;
+            margin: auto;
+        }
+        .shop h2 {
             text-align: center;
         }
-
-        h2 {
-            margin-bottom: 20px;
+        .item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
         }
-
-        .form-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
+        .item button {
+            background-color: #4CAF50;
             color: white;
             border: none;
-            border-radius: 4px;
-            cursor: pointer;
+            border-radius: 5px;
+            padding: 5px 10px;
         }
-
-        button:hover {
-            background-color: #0056b3;
+        .cart {
+            margin-top: 20px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
         }
-
-        .error-message {
-            color: red;
-            margin-top: 10px;
+        .total {
+            font-weight: bold;
+            text-align: right;
+        }
+        .transaction-code {
+            text-align: center;
+            margin-top: 20px;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <h2>Login</h2>
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="idCardNumber">ID Card Number:</label>
-                <input type="text" id="idCardNumber" name="idCardNumber" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit">Login</button>
-            <p id="errorMessage" class="error-message"></p>
-        </form>
+    <div class="shop">
+        <h2>Kid's Shop</h2>
+        <div class="item" data-name="Candy" data-price="1.50">
+            <span>Candy - ₱1.50</span>
+            <button onclick="addToCart(this)">Add to Cart</button>
+        </div>
+        <div class="item" data-name="Toy Car" data-price="5.00">
+            <span>Toy Car - ₱5.00</span>
+            <button onclick="addToCart(this)">Add to Cart</button>
+        </div>
+        <div class="item" data-name="Doll" data-price="7.50">
+            <span>Doll - ₱7.50</span>
+            <button onclick="addToCart(this)">Add to Cart</button>
+        </div>
+        <div class="item" data-name="Cookies" data-price="3.00">
+            <span>Cookies - ₱3.00</span>
+            <button onclick="addToCart(this)">Add to Cart</button>
+        </div>
+        <div class="cart">
+            <h3>Cart</h3>
+            <div id="cart-items"></div>
+            <div class="total">Total: ₱<span id="total-amount">0.00</span></div>
+            <button onclick="checkout()">Checkout</button>
+        </div>
+        <div class="transaction-code">
+            <p id="transaction-code-display"></p>
+        </div>
     </div>
+
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+        let cart = [];
+        let totalAmount = 0;
 
-            const idCardNumber = document.getElementById('idCardNumber').value;
-            const password = document.getElementById('password').value;
-            const errorMessage = document.getElementById('errorMessage');
+        function addToCart(button) {
+            const item = button.parentElement;
+            const name = item.getAttribute('data-name');
+            const price = parseFloat(item.getAttribute('data-price'));
 
-            const redirectURL = validateLogin(idCardNumber, password);
-            if (redirectURL) {
-                errorMessage.textContent = '';
-                window.location.href = redirectURL;
-            } else {
-                errorMessage.textContent = 'Invalid ID card number or password';
-            }
-        });
+            cart.push({ name, price });
+            updateCart();
+        }
 
-        function validateLogin(idCardNumber, password) {
-            if (idCardNumber === '0021' && password === '0020') {
-                return 'https://justforfuncom.github.io/Bankbo/';
+        function updateCart() {
+            const cartItemsDiv = document.getElementById('cart-items');
+            cartItemsDiv.innerHTML = '';
+
+            cart.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.textContent = `${item.name} - ₱${item.price.toFixed(2)}`;
+                cartItemsDiv.appendChild(div);
+            });
+
+            totalAmount = cart.reduce((sum, item) => sum + item.price, 0);
+            document.getElementById('total-amount').textContent = totalAmount.toFixed(2);
+        }
+
+        function generateTransactionCode() {
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const numbers = '0123456789';
+            let code = '';
+            for (let i = 0; i < 4; i++) {
+                code += letters[Math.floor(Math.random() * letters.length)];
+                code += numbers[Math.floor(Math.random() * numbers.length)];
             }
-            if (idCardNumber === '2101' && password === '2000') {
-                return 'https://justforfuncom.github.io/BankCa/';
+            return code;
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Your cart is empty.');
+                return;
             }
-            if (idCardNumber === '14RT' && password === '176S') {
-                return 'https://justforfuncom.github.io/Bankjoan/';
-            }
-            return null;
+
+            const transactionCode = generateTransactionCode();
+            localStorage.setItem('transactionCode', transactionCode);
+            localStorage.setItem('totalAmount', totalAmount);
+
+            document.getElementById('transaction-code-display').textContent = `Transaction Code: ${transactionCode}`;
         }
     </script>
 </body>
-    </html>
+</html>
