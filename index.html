@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store</title>
+</head>
+<body>
+    <h1>Welcome to Our Store</h1>
+    <div id="items">
+        <div>
+            <span>Item 1 - ₱100</span>
+            <button onclick="addToCart('item1', 100)">Add to Cart</button>
+        </div>
+        <div>
+            <span>Item 2 - ₱200</span>
+            <button onclick="addToCart('item2', 200)">Add to Cart</button>
+        </div>
+    </div>
+    <button onclick="checkout()">Checkout</button>
+
+    <script>
+        let cart = [];
+
+        function addToCart(name, price) {
+            cart.push({ name, price });
+            alert(name + ' added to cart!');
+        }
+
+        function checkout() {
+            const phoneNumber = prompt('Enter your phone number:');
+            if (!phoneNumber) return alert('Phone number is required');
+
+            fetch('/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ phoneNumber, items: cart })
+            })
+            .then(response => response.text())
+            .then(data => alert(data))
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
